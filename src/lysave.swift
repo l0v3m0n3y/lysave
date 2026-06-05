@@ -45,4 +45,26 @@ public class Lysave{
         let (data, _) = try await URLSession.shared.data(for: request)
         return try JSONSerialization.jsonObject(with: data)
     }
+    
+    public func getVideoInfoSearchKeys(searchKey: String, pageSize: Int = 6) async throws -> Any {
+        let urlString = "\(api)/youtube-service/youtube/getVideoInfoSearchKeys"
+        guard let url = URL(string: urlString) else {
+            throw NSError(domain: "Invalid URL", code: -1)
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.allHTTPHeaderFields = headers
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body: [String: Any] = [
+        "searchKey": searchKey,
+        "nextToken": "",
+        "pageSize": pageSize,
+        "needToLoadVideoIds": []
+        ]
+        request.httpBody = try JSONSerialization.data(withJSONObject: body, options: [])
+        
+        let (responseData, _) = try await URLSession.shared.data(for: request)
+        return try JSONSerialization.jsonObject(with: responseData)
+    }
 }
